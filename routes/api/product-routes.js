@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
   // be sure to include its associated Category and Tag data
   try {
     const productGet = Product.findAll({
-      include: [{model: Category}, {model: Tag}] });
+      include: [{model: Category}, {model: Tag, through: ProductTag}] });
       res.status(200).json(productGet);
   } catch (err) {
     res.status(500).json(err);
@@ -20,6 +20,15 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
+  try {
+    const productGetId = Product.findOne({
+      where: { id: req.params.id },
+      include: [{model: Category}, {model: Tag, through: ProductTag}]
+    });
+    res.status(200).json(productGetId);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 // create new product
@@ -99,17 +108,15 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   // delete one product by its `id` value
   try {
-    const productData = await Product.destroy({
+    const productData = Product.destroy({
       where: {
         id: req.params.id,
       },
     });
-
-    if (!libraryCardData) {
-      res.status(404).json({ message: 'No library card found with that id!' });
-      return;
-    }
-
+    // if (!productData) {
+    //   res.status(404).json({ message: 'No product found' });
+    //   return;
+    // }
     res.status(200).json(productData);
   } catch (err) {
     res.status(500).json(err);

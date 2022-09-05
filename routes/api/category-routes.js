@@ -3,13 +3,13 @@ const { Category, Product } = require('../../models');
 
 // The `/api/categories` endpoint
 
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
   // find all categories
   try {
-    const categoryData = Category.findAll({
+    const catData = Category.findAll({
       include: [{model: Product}],
     });
-    res.status(200).json(categoryData);
+    res.status(200).json(catData);
   } catch (err){ 
     res.status(500).json(err);
 
@@ -20,11 +20,11 @@ router.get('/', async (req, res) => {
 router.get('/:id', (req, res) => {
   // find one category by its `id` value
   // be sure to include its associated Products
-  // findByPk(req.params.id
   try {
-    const categoryId = Category.findByPk({
-      include: [{model: Product}] }, req.params.id);
-    res.status(200).json(categoryId);
+    const catGetId = Category.findOne({
+      where: { id: req.params.id},
+      include: [{model: Product}] });
+    res.status(200).json(catGetId);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -33,27 +33,38 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
   // create a new category
   try {
-    // const 
-  } catch (error) {
-    
+    const catPost = Category.create(req.body);
+    res.status(200).json(catPost);
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 
 router.put('/:id', (req, res) => {
   // update a category by its `id` value
   try {
-    
-  } catch (error) {
-    
+    const catUpdate = Category.update({
+      where: {
+        id: req.params.id,
+      },
+    });
+    res.status(200).json(catUpdate);
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 
 router.delete('/:id', (req, res) => {
   // delete a category by its `id` value
   try {
-    
-  } catch (error) {
-    
+    const catDelete = Category.destroy({
+      where: {
+        id: req.params.id,
+      }
+    });
+    res.status(200).json(catDelete);
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 
